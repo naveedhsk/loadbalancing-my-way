@@ -1,0 +1,19 @@
+frontend app1_ssl
+    bind *:443 ssl crt /etc/haproxy/certs.d/example.com.crt crt /etc/haproxy/certs.d/ no-sslv3
+
+    option http-server-close
+    option forwardfor
+    reqadd X-Forwarded-Proto:\ https
+    reqadd X-Forwarded-Port:\ 443
+
+    # set HTTP Strict Transport Security (HTST) header
+    rspadd  Strict-Transport-Security:\ max-age=15768000
+
+    # some ACLs and URL rewrites...
+
+    default_backend             backend_app1_ssl
+
+
+backend backend_app1_ssl
+    server mybackendserver1 192.1.1.1:443 redir https://192.1.1.1 
+server mybackendserver2 192.1.1.2:443 redir https://192.1.1.2
